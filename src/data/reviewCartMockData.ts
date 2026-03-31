@@ -1,4 +1,4 @@
-import type { ReviewCartData } from '../types/cartTypes';
+import type { ProductListItem, ProductOptionItem, ReviewCartData } from '../types/cartTypes';
 
 const dairyMilkImage = require('../assets/images/products/dairymilk.png');
 const curdImage = require('../assets/images/products/curd.png');
@@ -6,6 +6,7 @@ const curdImage = require('../assets/images/products/curd.png');
 export const reviewCartMockData: ReviewCartData = {
   cartItems: new Array(4).fill(null).map((_, index) => ({
     id: `cart-${index}`,
+    sourceKey: `cart-${index}`,
     name: 'Gold Premium Assam Tea Rich Taste & Irresistible',
     weight: '3 X 1kg',
     price: 199,
@@ -69,3 +70,31 @@ export const reviewCartMockData: ReviewCartData = {
     { id: 'c3', badge: '₹250\nOFF', code: 'ABCDEFGHI', applied: false },
   ],
 };
+
+export function buildReviewSuggestionOptions(product: ProductListItem): ProductOptionItem[] {
+  const imageSource = product.visual.imageSource ?? curdImage;
+  const modalSize = '3 * 1';
+
+  return [
+    {
+      id: 'option-1',
+      imageSource,
+      name: product.name,
+      size: modalSize,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      badge: '1',
+      action: 'stepper',
+    },
+    {
+      id: 'option-2',
+      imageSource,
+      name: `${product.name} Combo`,
+      size: modalSize,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      badge: '2',
+      action: 'add',
+    },
+  ];
+}

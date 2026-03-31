@@ -69,6 +69,8 @@ export type ProductOptionItem = {
 
 export type ReviewCartItem = {
   id: string;
+  isOutOfStock?: boolean;
+  sourceKey: string;
   name: string;
   weight: string;
   price: number;
@@ -88,4 +90,20 @@ export type ReviewCartData = {
   cartItems: ReviewCartItem[];
   suggestions: ProductListItem[];
   coupons: CouponItem[];
+};
+
+export type ReviewCartPricing = {
+  appliedCoupon: CouponItem | null;
+  cashbackRemaining: number;
+  couponDiscount: number;
+  deliveryFee: number;
+  deliveryFeeOriginal: number;
+  deliveryFeeShortfall: number;
+  discount: number;
+  itemDiscount: number;
+  itemTotal: number;
+  platformFee: number;
+  totalPayable: number;
+  totalQuantity: number;
+  totalSavings: number;
 };

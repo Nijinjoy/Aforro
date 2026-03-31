@@ -90,8 +90,10 @@ export function CartScreen({ onReviewCart }: CartScreenProps) {
   const { data: screenData, isLoading } = useCartScreenData();
   const {
     actions: {
+      addReviewCartItems,
       closeOptionsSheet,
       openOptionsSheet,
+      resetOptionCounts,
       setActiveImageIndex,
       updateOptionCount,
     },
@@ -165,7 +167,7 @@ export function CartScreen({ onReviewCart }: CartScreenProps) {
 
             <TouchableOpacity
               activeOpacity={0.85}
-              onPress={openOptionsSheet}
+              onPress={() => openOptionsSheet('featured')}
               style={styles.optionsButton}>
               <View style={styles.optionsButtonContent}>
                 <Text style={styles.optionsButtonText}>{featuredProduct.cta}</Text>
@@ -181,7 +183,10 @@ export function CartScreen({ onReviewCart }: CartScreenProps) {
         </View>
 
         <ProductSectionWrapper title="Similar product">
-          <ProductRow products={similarProducts} />
+          <ProductRow
+            onPressOptions={() => openOptionsSheet('similar')}
+            products={similarProducts}
+          />
         </ProductSectionWrapper>
 
         <ProductSectionWrapper title="Description">
@@ -189,7 +194,10 @@ export function CartScreen({ onReviewCart }: CartScreenProps) {
         </ProductSectionWrapper>
 
         <ProductSectionWrapper title="Customers also bought">
-          <ProductRow products={recommendedProducts} />
+          <ProductRow
+            onPressOptions={() => openOptionsSheet('recommended')}
+            products={recommendedProducts}
+          />
         </ProductSectionWrapper>
       </ScrollView>
 
@@ -202,6 +210,8 @@ export function CartScreen({ onReviewCart }: CartScreenProps) {
         }}
         onClose={closeOptionsSheet}
         onConfirm={() => {
+          addReviewCartItems(featuredOptions, optionCounts);
+          resetOptionCounts();
           closeOptionsSheet();
           onReviewCart?.();
         }}
@@ -350,10 +360,10 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 2,
-    fontSize: 24,
-    lineHeight: 28,
+    fontSize: 14,
+    lineHeight: 18,
     color: '#242424',
-    fontWeight: '700',
+    fontWeight: '600',
   },
   subtitle: {
     marginTop: 2,

@@ -1,13 +1,22 @@
 import { memo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import type { CouponItem } from '../types/cartTypes';
 
 type TopCouponsSectionProps = {
   coupons: CouponItem[];
+  onApplyCoupon?: (couponId: string) => void;
 };
 
-function CouponTicket({ coupon, index }: { coupon: CouponItem; index: number }) {
+function CouponTicket({
+  coupon,
+  index,
+  onApplyCoupon,
+}: {
+  coupon: CouponItem;
+  index: number;
+  onApplyCoupon?: (couponId: string) => void;
+}) {
   const subtitle =
     index === 0 ? 'Add items worth ₹20\nto avail this offer' : 'Upto ₹120 on orders\nabove ₹1200';
 
@@ -31,12 +40,16 @@ function CouponTicket({ coupon, index }: { coupon: CouponItem; index: number }) 
           ]}>
           <View style={styles.ticketDivider} />
 
-          <View style={[styles.ctaBar, coupon.applied && styles.ctaBarApplied]}>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            disabled={coupon.applied}
+            onPress={() => onApplyCoupon?.(coupon.id)}
+            style={[styles.ctaBar, coupon.applied && styles.ctaBarApplied]}>
             {coupon.applied ? <Feather color="#FFFFFF" name="check" size={18} /> : null}
             <Text style={[styles.ctaText, coupon.applied && styles.ctaTextApplied]}>
               {coupon.applied ? 'APPLIED' : 'APPLY'}
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -45,7 +58,10 @@ function CouponTicket({ coupon, index }: { coupon: CouponItem; index: number }) 
 
 export const TopCouponsSection = memo(function TopCouponsSection({
   coupons,
+  onApplyCoupon,
 }: TopCouponsSectionProps) {
+  const appliedCoupon = coupons.find(coupon => coupon.applied) ?? null;
+
   return (
     <View style={styles.section}>
       <View style={styles.header}>
@@ -62,7 +78,12 @@ export const TopCouponsSection = memo(function TopCouponsSection({
 
       <View style={styles.row}>
         {coupons.map((coupon, index) => (
-          <CouponTicket coupon={coupon} index={index} key={coupon.id} />
+          <CouponTicket
+            coupon={coupon}
+            index={index}
+            key={coupon.id}
+            onApplyCoupon={onApplyCoupon}
+          />
         ))}
       </View>
 
@@ -71,7 +92,15 @@ export const TopCouponsSection = memo(function TopCouponsSection({
       <View style={styles.savingRow}>
         <Text style={styles.party}>🎉</Text>
         <Text style={styles.savingText}>
-          You are <Text style={styles.savingStrong}>saving ₹250</Text> with this coupon
+          {appliedCoupon ? (
+            <>
+              Coupon <Text style={styles.savingStrong}>{appliedCoupon.code}</Text> applied
+            </>
+          ) : (
+            <>
+              Tap <Text style={styles.savingStrong}>APPLY</Text> to use a coupon
+            </>
+          )}
         </Text>
         <Text style={styles.party}>🎉</Text>
       </View>

@@ -1,97 +1,236 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Aforro
 
-# Getting Started
+React Native shopping flow prototype with two main screens:
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- `CartScreen`: product details, options sheet, and product discovery sections
+- `ReviewCartScreen`: cart review, coupons, address/login bottom sheets, and checkout footer states
 
-## Step 1: Start Metro
+## Requirements
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- Node.js `>= 22.11.0`
+- npm
+- React Native environment set up for Android and/or iOS
+- Xcode and CocoaPods for iOS
+- Android Studio / Android SDK for Android
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+React Native environment setup reference:
+
+- https://reactnative.dev/docs/environment-setup
+
+## Setup
+
+1. Install dependencies:
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+npm install
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+2. Install iOS pods:
 
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
+cd ios
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+cd ..
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+3. Start Metro:
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm start
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+4. Run the app:
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Android:
 
-## Step 3: Modify your app
+```sh
+npx react-native run-android
+```
 
-Now that you have successfully run the app, let's make changes!
+iOS:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+```sh
+npx react-native run-ios
+```
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Useful Commands
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Start Metro:
 
-## Congratulations! :tada:
+```sh
+npm start
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+Run Android:
 
-### Now what?
+```sh
+npx react-native run-android
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+Run iOS:
 
-# Troubleshooting
+```sh
+npx react-native run-ios
+```
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Run tests:
 
-# Learn More
+```sh
+npm test
+```
 
-To learn more about React Native, take a look at the following resources:
+Type-check:
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```sh
+npx tsc --noEmit
+```
+
+Lint:
+
+```sh
+npm run lint
+```
+
+## Project Structure
+
+```text
+App.tsx
+src/
+  api/
+    cartApi.ts
+  assets/
+    images/
+  components/
+    CartHeader.tsx
+    ProductCard.tsx
+    ProductOptionsSheet.tsx
+    ProductRow.tsx
+    ProductSectionWrapper.tsx
+    QuantityStepper.tsx
+    ReviewCartItemsWrapper.tsx
+    ReviewCartSummarySection.tsx
+    TopCouponsSection.tsx
+  data/
+    cartMockData.ts
+    reviewCartMockData.ts
+  hooks/
+    useCartScreenData.ts
+  screens/
+    CartScreen.tsx
+    ReviewCartScreen.tsx
+  store/
+    CartFlowProvider.tsx
+  types/
+    cartTypes.ts
+  utils/
+    formatters.ts
+```
+
+## Architecture
+
+The app uses a simple local-state architecture centered on a single context provider.
+
+### App Shell
+
+- `App.tsx` sets up `SafeAreaProvider`, loads Feather icons, and mounts `CartFlowProvider`
+- Navigation is local and screen-based, not React Navigation based
+- `AppContent` switches between `cart` and `review-cart` using provider state
+
+### State Management
+
+- `src/store/CartFlowProvider.tsx` holds shared app state with `useReducer`
+- It manages:
+  - current screen
+  - review cart items
+  - option sheet visibility
+  - option counts
+  - image pager state
+  - offer frame visibility
+- Shared actions such as adding items, removing items, quantity updates, and opening sheets are exposed through `useCartFlow()`
+
+This keeps screen components mostly focused on rendering and local UI state.
+
+### Screens
+
+- `src/screens/CartScreen.tsx`
+  - shows the product details page
+  - opens the shared product options bottom sheet
+  - adds selected options into review-cart state
+- `src/screens/ReviewCartScreen.tsx`
+  - shows review cart items, savings banner, coupons, suggestions, and summary
+  - handles address flow bottom sheets
+  - handles login-to-continue footer state
+
+### Data Layer
+
+- `src/data/cartMockData.ts` contains the cart screen mock content and featured product options builder
+- `src/data/reviewCartMockData.ts` contains review-cart mock content and review suggestion option builder
+- `src/hooks/useCartScreenData.ts` reads cart screen data for the cart page
+- `src/api/cartApi.ts` is the current API abstraction layer placeholder
+
+Right now the app is mock-data driven. Replacing the mock layer with live API data should mostly happen in `api/`, `hooks/`, and the data builders.
+
+### UI Composition
+
+The component layer is intentionally split into small reusable primitives:
+
+- `ProductCard`, `ProductRow`, `ProductSectionWrapper` for product listing sections
+- `ProductOptionsSheet` for bottom-sheet style option selection
+- `ReviewCartItemsWrapper` for cart line items
+- `TopCouponsSection` and `ReviewCartSummarySection` for checkout-related blocks
+- `QuantityStepper` for quantity controls
+
+### Types
+
+- `src/types/cartTypes.ts` contains the main shared domain types for products, coupons, review cart items, and screen data
+
+### Utilities
+
+- `src/utils/formatters.ts` contains price formatting helpers used across the UI
+
+## Main UI Flows
+
+### Cart to Review Cart
+
+1. User opens product options from `CartScreen`
+2. Selected options are added through `CartFlowProvider`
+3. App switches to `review-cart`
+
+### Review Cart Item Management
+
+- Increase/decrease quantity from the review cart list
+- Decreasing from `1` removes the item
+- Suggested products can:
+  - add directly with `Add`
+  - open the bottom options sheet with `2 options`
+
+### Coupon Flow
+
+- Coupons are rendered in `TopCouponsSection`
+- Applying one coupon marks it as the active coupon for the screen state
+
+### Address and Login Footer Flow
+
+`ReviewCartScreen` currently supports multiple footer states:
+
+- initial `Add address` footer
+- serviceability bottom sheet
+- login bottom sheet
+- `Login to continue` footer
+- selected address footer
+
+These are currently local UI states in `ReviewCartScreen.tsx`.
+
+## Notes for Development
+
+- The current app favors local UI state and provider state over heavier navigation/state libraries
+- Several flows are visual prototypes and are currently driven by mock data
+- Root-level reference images like `address.png`, `service.png`, `login.png`, and `continue.png` are being used as design references during implementation
+
+## Suggested Next Steps
+
+- Move footer flow state into a dedicated checkout/address state model
+- Replace mock product and coupon data with API-backed data
+- Add component tests for reducer-driven cart transitions
+- Add screen-level tests for review cart footer and bottom-sheet states

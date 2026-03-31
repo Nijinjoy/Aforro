@@ -34,6 +34,11 @@ export const ReviewCartItemsWrapper = memo(function ReviewCartItemsWrapper({
               {item.name}
             </Text>
             <Text style={styles.weight}>{item.weight}</Text>
+            {item.isOutOfStock ? (
+              <View style={styles.stockLabel}>
+                <Text style={styles.stockLabelText}>Out of stock</Text>
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.meta}>
@@ -106,6 +111,19 @@ const styles = StyleSheet.create({
     marginTop: 6,
     color: '#A2A2A2',
     fontSize: 12,
+  },
+  stockLabel: {
+    alignSelf: 'flex-start',
+    marginTop: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    backgroundColor: '#FFF1E8',
+  },
+  stockLabelText: {
+    color: '#D7651A',
+    fontSize: 10,
+    fontWeight: '700',
   },
   meta: {
     alignItems: 'flex-end',

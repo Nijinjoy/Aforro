@@ -7,6 +7,8 @@ import { DiscountBadge } from './DiscountBadge';
 
 type ProductCardProps = {
   compact?: boolean;
+  onPressAction?: (product: ProductListItem) => void;
+  onPressOptions?: (product: ProductListItem) => void;
   product: ProductListItem;
   variant?: 'default' | 'review';
 };
@@ -14,9 +16,20 @@ type ProductCardProps = {
 export const ProductCard = memo(function ProductCard({
   product,
   compact = false,
+  onPressAction,
+  onPressOptions,
   variant = 'default',
 }: ProductCardProps) {
   const isReview = variant === 'review';
+  const hasOptions = product.cta.toLowerCase().includes('option');
+  const handlePress = () => {
+    if (hasOptions) {
+      onPressOptions?.(product);
+      return;
+    }
+
+    onPressAction?.(product);
+  };
 
   return (
     <View
@@ -72,10 +85,13 @@ export const ProductCard = memo(function ProductCard({
         <Text style={styles.oldPrice}>{formatPrice(product.oldPrice)}</Text>
       </View>
 
-      <TouchableOpacity activeOpacity={0.85} style={[styles.button, compact && styles.buttonCompact]}>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={handlePress}
+        style={[styles.button, compact && styles.buttonCompact]}>
         <View style={styles.buttonContent}>
           <Text style={styles.buttonText}>{product.cta}</Text>
-          {product.cta.toLowerCase().includes('option') ? (
+          {hasOptions ? (
             <Feather color="#FFFFFF" name="chevron-down" size={14} style={styles.buttonIcon} />
           ) : null}
         </View>

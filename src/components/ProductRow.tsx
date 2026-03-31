@@ -4,11 +4,15 @@ import type { ProductListItem } from '../types/cartTypes';
 import { ProductCard } from './ProductCard';
 
 type ProductRowProps = {
+  onPressProduct?: (product: ProductListItem) => void;
+  onPressOptions?: (product: ProductListItem) => void;
   products: ProductListItem[];
   variant?: 'default' | 'review';
 };
 
 export const ProductRow = memo(function ProductRow({
+  onPressProduct,
+  onPressOptions,
   products,
   variant = 'default',
 }: ProductRowProps) {
@@ -18,7 +22,14 @@ export const ProductRow = memo(function ProductRow({
       contentContainerStyle={[styles.row, variant === 'review' && styles.rowReview]}
       showsHorizontalScrollIndicator={false}>
       {products.map(product => (
-        <ProductCard compact key={product.id} product={product} variant={variant} />
+        <ProductCard
+          compact
+          key={product.id}
+          onPressAction={onPressProduct}
+          onPressOptions={onPressOptions}
+          product={product}
+          variant={variant}
+        />
       ))}
     </ScrollView>
   );

@@ -26,7 +26,7 @@ export const ProductOptionsSheet = memo(function ProductOptionsSheet({
   visible,
 }: ProductOptionsSheetProps) {
   return (
-    <Modal animationType="fade" onRequestClose={onClose} transparent visible={visible}>
+    <Modal animationType="slide" onRequestClose={onClose} transparent visible={visible}>
       <View style={styles.overlay}>
         <TouchableOpacity activeOpacity={1} onPress={onClose} style={styles.backdrop} />
 
@@ -173,7 +173,11 @@ const styles = StyleSheet.create({
   },
   size: {
     color: '#B1B1B1',
-    fontSize: 11,
+    width: 40,
+    height: 16,
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 16,
   },
   meta: {
     alignItems: 'flex-end',
